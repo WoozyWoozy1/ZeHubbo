@@ -1,15 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ESNext",                          // modern JS output
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],    // enable browser + latest features
-    "jsx": "react-jsx",                          // use React 17+ JSX transform
-    "module": "ESNext",                          // native ES modules
-    "moduleResolution": "Node",                  // Node-style path resolution
-    "strict": true,                              // all strict mode checks on
-    "skipLibCheck": true,                        // don’t type-check deps
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,                     // one-file-per-module mode (needed by Vite)
-    "noEmit": true                               // don’t output .js files (Vite handles that)
-  },
-  "include": ["src"]                             // only type-check your source code
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
 }
