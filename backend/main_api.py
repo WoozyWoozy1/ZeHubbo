@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from core.search_engine import search_media
 
@@ -22,4 +22,4 @@ def search(query: str = Query(...), category: str = Query(...)):
         results = search_media(query, category)
         return [item.to_dict() for item in results]
     except ValueError as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=400, detail=str(e))
