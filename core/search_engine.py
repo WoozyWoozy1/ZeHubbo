@@ -1,10 +1,10 @@
-from typing import Literal
+from typing import List, Literal
 from models.media_item import MediaItem
 from api_clients.tmdb import search_tmdb
 from api_clients.anilist import search_anilist
 from api_clients.vndb import search_vndb
-from api_clients.googlebooks import search_google_books
-from api_clients import search_igdb, get_access_token
+from api_clients.googlebooks import search_googlebooks
+from api_clients.igdb import search_igdb
 from constants.source_mapping import MEDIA_TYPE_TO_SOURCE
 
 def search_media(query: str, category: str) -> List[MediaItem]:
@@ -34,7 +34,7 @@ def search_media(query: str, category: str) -> List[MediaItem]:
         return search_vndb(query)
 
     elif source == "GoogleBooks":
-        return search_google_books(query)
+        return search_googlebooks(query)
 
     elif source == "IGDB":
         return search_igdb(query)

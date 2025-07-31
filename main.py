@@ -1,10 +1,8 @@
-
-
 from api_clients.tmdb import search_tmdb
 from api_clients.anilist import search_anilist
 from api_clients.vndb import search_vndb
 from api_clients.googlebooks import search_googlebooks
-from api_clients.idgb import search_igdb
+from api_clients.igdb import search_igdb
 
 if __name__ == "__main__":
     # TMDB
