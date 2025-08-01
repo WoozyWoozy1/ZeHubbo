@@ -1,6 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import SearchBar from './components/search/searchBar';
 import MediaList from './components/media/mediaList';
+import SettingsModal from './components/settings/settingsModal';
+import SettingsButton from './components/settings/settingsButton';
+import use_saved_entries from './hooks/use_saved_entries';
 import { search_media } from './api/search_media';
 import type { MediaItem } from './types';
 
@@ -10,8 +13,10 @@ export default function App() {
   const [results, setResults] = useState<MediaItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  const { saved_entries } = use_saved_entries();
+  const searchAreaRef = useRef<HTMLDivElement>(null);
 
   const handleSearch = async (newQuery: string, newCategory: string) => {
     setQuery(newQuery);
@@ -20,7 +25,7 @@ export default function App() {
       const data = await search_media(newQuery, newCategory);
       setResults(data);
       setError(null);
-      setShowResults(true); // show results on search
+      setShowResults(true);
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'Search failed');
@@ -29,13 +34,22 @@ export default function App() {
     }
   };
 
-  const handleCardClick = () => {
-    setShowResults(false); // hide dropdown on card click
+  const handleDownload = () => {
+    const blob = new Blob([JSON.stringify(saved_entries, null, 2)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'zehubbo_saved_entries.json';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
+  // 🔐 Click-outside listener
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchAreaRef.current && !searchAreaRef.current.contains(event.target as Node)) {
         setShowResults(false);
       }
     };
@@ -44,11 +58,19 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-10">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-10 relative">
       <h1 className="text-3xl font-bold mb-6">ZeHubbo</h1>
-      <div ref={containerRef} className="relative w-full max-w-3xl">
+      <SettingsButton onClick={() => setShowSettings(true)} />
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        onDownload={handleDownload}
+      />
+      <div className="relative w-full max-w-3xl" ref={searchAreaRef}>
         <SearchBar onSearch={handleSearch} />
-        {showResults && <MediaList results={results} onCardClick={handleCardClick} />}
+        {showResults && (
+          <MediaList results={results} onCardClick={() => setShowResults(false)} />
+        )}
       </div>
       {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>

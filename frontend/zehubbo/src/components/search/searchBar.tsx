@@ -30,7 +30,6 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
         <option value="show">Show</option>
         <option value="anime">Anime</option>
         <option value="manga">Manga</option>
-        <option value="manhwa">Manhwa</option>
         <option value="light novel">Light Novel</option>
         <option value="visual novel">Visual Novel</option>
         <option value="book">Book</option>
