@@ -6,6 +6,7 @@ import SettingsButton from './components/settings/settingsButton';
 import use_saved_entries from './hooks/use_saved_entries';
 import { search_media } from './api/search_media';
 import type { MediaItem } from './types';
+import CategoryTabs from './components/library/categoryTabs';
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -14,6 +15,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('global');
 
   const { saved_entries } = use_saved_entries();
   const searchAreaRef = useRef<HTMLDivElement>(null);
@@ -46,7 +48,6 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
-  // 🔐 Click-outside listener
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchAreaRef.current && !searchAreaRef.current.contains(event.target as Node)) {
@@ -60,18 +61,26 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-10 relative">
       <h1 className="text-3xl font-bold mb-6">ZeHubbo</h1>
+
       <SettingsButton onClick={() => setShowSettings(true)} />
       <SettingsModal
         isOpen={showSettings}
         onClose={() => setShowSettings(false)}
         onDownload={handleDownload}
       />
+
       <div className="relative w-full max-w-3xl" ref={searchAreaRef}>
         <SearchBar onSearch={handleSearch} />
         {showResults && (
           <MediaList results={results} onCardClick={() => setShowResults(false)} />
         )}
       </div>
+
+      <div className="mt-8 w-full max-w-4xl">
+        <CategoryTabs selected={activeCategory} onSelect={setActiveCategory} />
+        {/* status tabs and filtered results will go here next */}
+      </div>
+
       {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
   );
