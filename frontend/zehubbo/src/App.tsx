@@ -5,8 +5,10 @@ import SettingsModal from './components/settings/settingsModal';
 import SettingsButton from './components/settings/settingsButton';
 import use_saved_entries from './hooks/use_saved_entries';
 import { search_media } from './api/search_media';
-import type { MediaItem } from './types';
+import type { MediaItem, SavedEntry } from './types';
 import CategoryTabs from './components/library/categoryTabs';
+import StatusTabs from './components/library/statusTabs';
+import MediaCard from './components/media/mediaCard';
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -16,6 +18,7 @@ export default function App() {
   const [showResults, setShowResults] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [activeCategory, setActiveCategory] = useState('global');
+  const [activeStatus, setActiveStatus] = useState('default');
 
   const { saved_entries } = use_saved_entries();
   const searchAreaRef = useRef<HTMLDivElement>(null);
@@ -58,6 +61,37 @@ export default function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const getStatusOptions = (category: string): string[] => {
+    const defaults: Record<
+      'movie' | 'show' | 'anime' | 'manga' | 'light novel' | 'visual novel' | 'book' | 'game' | 'global',
+      string[]
+    > = {
+      movie: ['Watching', 'Completed', 'On Hold', 'Dropped', 'Plan to Watch'],
+      show: ['Watching', 'Completed', 'On Hold', 'Dropped', 'Plan to Watch'],
+      anime: ['Watching', 'Completed', 'On Hold', 'Dropped', 'Plan to Watch'],
+      manga: ['Reading', 'Completed', 'On Hold', 'Dropped', 'Plan to Read'],
+      'light novel': ['Reading', 'Completed', 'On Hold', 'Dropped', 'Plan to Read'],
+      'visual novel': ['Reading', 'Completed', 'On Hold', 'Dropped', 'Plan to Read'],
+      book: ['Reading', 'Completed', 'On Hold', 'Dropped', 'Plan to Read'],
+      game: ['Playing', 'Completed', 'On Hold', 'Dropped', 'Plan to Play'],
+      global: ['Experiencing', 'Completed', 'On Hold', 'Dropped', 'Plan to Experience'],
+    };
+
+  if (category in defaults) {
+    return ['Default', ...defaults[category as keyof typeof defaults]];
+  }
+
+  return ['Default', ...defaults['global']];
+};
+
+
+  const filteredEntries = saved_entries.filter((entry: SavedEntry) => {
+    const categoryMatch =
+      activeCategory === 'global' || entry.media_type.toLowerCase() === activeCategory;
+    const statusMatch = entry.userStatus.toLowerCase() === activeStatus;
+    return categoryMatch && statusMatch;
+  });
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-10 relative">
       <h1 className="text-3xl font-bold mb-6">ZeHubbo</h1>
@@ -76,9 +110,22 @@ export default function App() {
         )}
       </div>
 
-      <div className="mt-8 w-full max-w-4xl">
-        <CategoryTabs selected={activeCategory} onSelect={setActiveCategory} />
-        {/* status tabs and filtered results will go here next */}
+      <div className="mt-10 w-full max-w-4xl">
+        <CategoryTabs selected={activeCategory} onSelect={(category) => {
+          setActiveCategory(category);
+          const firstStatus = getStatusOptions(category)[0].toLowerCase();
+          setActiveStatus(firstStatus);
+        }} />
+        <StatusTabs
+          selected={activeStatus}
+          onSelect={setActiveStatus}
+          options={getStatusOptions(activeCategory)}
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {filteredEntries.map((item, index) => (
+            <MediaCard key={index} item={item} />
+          ))}
+        </div>
       </div>
 
       {error && <p className="text-red-500 mt-4">{error}</p>}
