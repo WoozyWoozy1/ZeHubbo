@@ -9,11 +9,3 @@ export async function search_media(query: string, category: string): Promise<Med
   if (!res.ok) throw new Error(res.statusText);
   return res.json() as Promise<MediaItem[]>;
 }
-
-// 🧪 TEMP TEST RUNNER
-if (require.main === module) {
-  (async () => {
-    const results = await search_media("Inception", "Movie");
-    console.log(results);
-  })();
-}
