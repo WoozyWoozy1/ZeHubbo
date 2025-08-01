@@ -13,7 +13,7 @@ export default function MediaList({ results, onCardClick }: MediaListProps) {
   const handleSaveClick = (item: MediaItem) => {
     const saved = {
       ...item,
-      userStatus: 'planned',
+      userStatus: 'default',
       userRating: 0,
       userReview: '',
       favorite: false,

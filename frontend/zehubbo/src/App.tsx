@@ -8,7 +8,7 @@ import { search_media } from './api/search_media';
 import type { MediaItem, SavedEntry } from './types';
 import CategoryTabs from './components/library/categoryTabs';
 import StatusTabs from './components/library/statusTabs';
-import MediaCard from './components/media/mediaCard';
+import UserEntryCard from './components/library/userEntryCard';
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -77,13 +77,12 @@ export default function App() {
       global: ['Experiencing', 'Completed', 'On Hold', 'Dropped', 'Plan to Experience'],
     };
 
-  if (category in defaults) {
-    return ['Default', ...defaults[category as keyof typeof defaults]];
-  }
+    if (category in defaults) {
+      return ['Default', ...defaults[category as keyof typeof defaults]];
+    }
 
-  return ['Default', ...defaults['global']];
-};
-
+    return ['Default', ...defaults['global']];
+  };
 
   const filteredEntries = saved_entries.filter((entry: SavedEntry) => {
     const categoryMatch =
@@ -110,20 +109,24 @@ export default function App() {
         )}
       </div>
 
-      <div className="mt-10 w-full max-w-4xl">
-        <CategoryTabs selected={activeCategory} onSelect={(category) => {
-          setActiveCategory(category);
-          const firstStatus = getStatusOptions(category)[0].toLowerCase();
-          setActiveStatus(firstStatus);
-        }} />
+      <div className="mt-10 w-full max-w-5xl">
+        <CategoryTabs
+          selected={activeCategory}
+          onSelect={(category) => {
+            setActiveCategory(category);
+            const firstStatus = getStatusOptions(category)[0].toLowerCase();
+            setActiveStatus(firstStatus);
+          }}
+        />
         <StatusTabs
           selected={activeStatus}
           onSelect={setActiveStatus}
           options={getStatusOptions(activeCategory)}
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {filteredEntries.map((item, index) => (
-            <MediaCard key={index} item={item} />
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-6">
+          {filteredEntries.map((entry, index) => (
+            <UserEntryCard key={index} entry={entry} />
           ))}
         </div>
       </div>

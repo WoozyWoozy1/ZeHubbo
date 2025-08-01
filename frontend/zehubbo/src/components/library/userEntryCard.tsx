@@ -6,7 +6,7 @@ type UserEntryCardProps = {
 
 export default function UserEntryCard({ entry }: UserEntryCardProps) {
   return (
-    <div className="relative w-full aspect-[2/3] overflow-hidden rounded-xl shadow-md bg-gray-200">
+    <div className="relative w-full max-w-[220px] aspect-[2/3] overflow-hidden rounded-2xl shadow-lg bg-gray-300 mx-auto">
       {entry.image_url ? (
         <img
           src={entry.image_url}
@@ -19,7 +19,8 @@ export default function UserEntryCard({ entry }: UserEntryCardProps) {
         </div>
       )}
 
-      <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-3 py-2">
+      {/* Overlay at bottom left */}
+      <div className="absolute bottom-0 left-0 w-full px-3 py-2 bg-gradient-to-t from-black/80 to-transparent">
         <p className="text-white text-sm font-semibold truncate">{entry.title}</p>
       </div>
     </div>
