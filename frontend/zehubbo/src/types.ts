@@ -34,13 +34,13 @@ export interface MediaItem {
  */
 export type SavedEntry = MediaItem & {
   /** The user's current status with this media (e.g. watching, dropped) */
-  userStatus: 'watching' | 'completed' | 'onHold' | 'dropped' | 'planned';
+  userStatus: string;
 
   /** User's personal rating of the media, from 0 to 10 */
-  rating: number;
+  userRating: number;
 
-  /** User's written review or notes about the media */
-  review: string;
+  /** User's written review about the media */
+  userReview: string;
 
   /** Whether the media is marked as a favorite by the user */
   favorite: boolean;

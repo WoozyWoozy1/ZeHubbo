@@ -2,11 +2,15 @@ import type { MediaItem } from '../../types';
 
 type MediaCardProps = {
   item: MediaItem;
+  onClick?: () => void;
 };
 
-export default function MediaCard({ item }: MediaCardProps) {
+export default function MediaCard({ item, onClick }: MediaCardProps) {
   return (
-    <div className="flex items-center gap-4 px-4 py-2 hover:bg-gray-100 cursor-pointer">
+    <div
+      onClick={onClick}
+      className="flex items-center gap-4 px-4 py-2 hover:bg-gray-100 cursor-pointer"
+    >
       {item.image_url && (
         <img
           src={item.image_url}
