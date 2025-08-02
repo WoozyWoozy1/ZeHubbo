@@ -83,11 +83,14 @@ export default function App() {
     return ['Default'];
   };
 
-  const filteredEntries = saved_entries.filter((entry: SavedEntry) => {
+  const filteredEntries = saved_entries
+  .filter((entry: SavedEntry) => {
     const categoryMatch = entry.media_type.toLowerCase() === activeCategory;
     const statusMatch = entry.userStatus.toLowerCase() === activeStatus;
     return categoryMatch && statusMatch;
-  });
+  })
+  .sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }));
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-10 relative">
