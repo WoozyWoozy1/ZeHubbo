@@ -4,7 +4,6 @@ type CategoryTabsProps = {
 };
 
 const categories = [
-  'Global',
   'Movie',
   'Show',
   'Anime',

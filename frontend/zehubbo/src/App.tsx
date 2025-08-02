@@ -17,7 +17,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('global');
+  const [activeCategory, setActiveCategory] = useState('movie'); // default to movie
   const [activeStatus, setActiveStatus] = useState('default');
 
   const { saved_entries } = use_saved_entries();
@@ -63,7 +63,7 @@ export default function App() {
 
   const getStatusOptions = (category: string): string[] => {
     const defaults: Record<
-      'movie' | 'show' | 'anime' | 'manga' | 'light novel' | 'visual novel' | 'book' | 'game' | 'global',
+      'movie' | 'show' | 'anime' | 'manga' | 'light novel' | 'visual novel' | 'book' | 'game',
       string[]
     > = {
       movie: ['Watching', 'Completed', 'On Hold', 'Dropped', 'Plan to Watch'],
@@ -74,19 +74,17 @@ export default function App() {
       'visual novel': ['Reading', 'Completed', 'On Hold', 'Dropped', 'Plan to Read'],
       book: ['Reading', 'Completed', 'On Hold', 'Dropped', 'Plan to Read'],
       game: ['Playing', 'Completed', 'On Hold', 'Dropped', 'Plan to Play'],
-      global: ['Experiencing', 'Completed', 'On Hold', 'Dropped', 'Plan to Experience'],
     };
 
     if (category in defaults) {
       return ['Default', ...defaults[category as keyof typeof defaults]];
     }
 
-    return ['Default', ...defaults['global']];
+    return ['Default'];
   };
 
   const filteredEntries = saved_entries.filter((entry: SavedEntry) => {
-    const categoryMatch =
-      activeCategory === 'global' || entry.media_type.toLowerCase() === activeCategory;
+    const categoryMatch = entry.media_type.toLowerCase() === activeCategory;
     const statusMatch = entry.userStatus.toLowerCase() === activeStatus;
     return categoryMatch && statusMatch;
   });
