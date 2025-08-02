@@ -37,7 +37,7 @@ export type SavedEntry = MediaItem & {
   userStatus: string;
 
   /** User's personal rating of the media, from 0 to 10 */
-  userRating: number;
+  userRating: number | null;
 
   /** User's written review about the media */
   userReview: string;
