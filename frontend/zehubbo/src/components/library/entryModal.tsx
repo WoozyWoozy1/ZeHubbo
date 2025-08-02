@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { SavedEntry } from '../../types';
-import use_saved_entries from '../../hooks/use_saved_entries';
+import { useSavedEntriesContext } from '../../hooks/savedEntriesContext';
 
 type EntryModalProps = {
   entry: SavedEntry;
@@ -8,14 +8,14 @@ type EntryModalProps = {
 };
 
 export default function EntryModal({ entry, onClose }: EntryModalProps) {
-  const { update_entry } = use_saved_entries();
+  const { updateEntry } = useSavedEntriesContext();
 
   const [userRating, setUserRating] = useState(entry.userRating ?? 0);
   const [userReview, setUserReview] = useState(entry.userReview ?? '');
   const [userNotes, setUserNotes] = useState(entry.userNotes ?? '');
 
   const handleSave = () => {
-    update_entry({ ...entry, userRating, userReview, userNotes });
+    updateEntry({ ...entry, userRating, userReview, userNotes });
     onClose();
   };
 

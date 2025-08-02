@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { SavedEntry } from '../../types';
-import use_saved_entries from '../../hooks/use_saved_entries';
+import { useSavedEntriesContext } from '../../hooks/savedEntriesContext';
 
 type UserEntryCardProps = {
   entry: SavedEntry;
@@ -24,26 +24,16 @@ const getStatusOptions = (mediaType: string): string[] => {
 
 export default function UserEntryCard({ entry, onClick }: UserEntryCardProps) {
   const [showOptions, setShowOptions] = useState(false);
-  const { update_entry, refresh_entries } = use_saved_entries();
+  const { updateEntry } = useSavedEntriesContext();
 
   const handleStatusChange = (newStatus: string) => {
-    const latest = JSON.parse(localStorage.getItem('zehubbo-saved') || '[]')
-      .find((e: SavedEntry) => e.source === entry.source && e.id === entry.id);
-
-    if (latest) {
-      update_entry({ ...latest, userStatus: newStatus.toLowerCase() });
-    } else {
-      update_entry({ ...entry, userStatus: newStatus.toLowerCase() });
-    }
-
-    refresh_entries();
+    updateEntry({ ...entry, userStatus: newStatus.toLowerCase() });
     setShowOptions(false);
   };
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation(); // avoid triggering entry modal
-    update_entry({ ...entry, favorite: !entry.favorite });
-    refresh_entries();
+    updateEntry({ ...entry, favorite: !entry.favorite });
   };
 
   const statusOptions = getStatusOptions(entry.media_type);

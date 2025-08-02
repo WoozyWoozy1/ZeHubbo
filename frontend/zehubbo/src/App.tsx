@@ -3,7 +3,7 @@ import SearchBar from './components/search/searchBar';
 import MediaList from './components/media/mediaList';
 import SettingsModal from './components/settings/settingsModal';
 import SettingsButton from './components/settings/settingsButton';
-import use_saved_entries from './hooks/use_saved_entries';
+import { useSavedEntriesContext, SavedEntriesProvider } from './hooks/savedEntriesContext';
 import { search_media } from './api/search_media';
 import type { MediaItem, SavedEntry } from './types';
 import CategoryTabs from './components/library/categoryTabs';
@@ -11,7 +11,7 @@ import StatusTabs from './components/library/statusTabs';
 import UserEntryCard from './components/library/userEntryCard';
 import EntryModal from './components/library/entryModal';
 
-export default function App() {
+function InnerApp() {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('');
   const [results, setResults] = useState<MediaItem[]>([]);
@@ -22,7 +22,7 @@ export default function App() {
   const [activeStatus, setActiveStatus] = useState('default');
   const [selectedEntry, setSelectedEntry] = useState<SavedEntry | null>(null);
 
-  const { saved_entries } = use_saved_entries();
+  const { savedEntries } = useSavedEntriesContext();
   const searchAreaRef = useRef<HTMLDivElement>(null);
 
   const handleSearch = async (newQuery: string, newCategory: string) => {
@@ -42,7 +42,7 @@ export default function App() {
   };
 
   const handleDownload = () => {
-    const blob = new Blob([JSON.stringify(saved_entries, null, 2)], {
+    const blob = new Blob([JSON.stringify(savedEntries, null, 2)], {
       type: 'application/json',
     });
     const url = URL.createObjectURL(blob);
@@ -85,13 +85,13 @@ export default function App() {
     return ['Default'];
   };
 
-  const filteredEntries = saved_entries
+  const filteredEntries = savedEntries
     .filter((entry: SavedEntry) => {
       const categoryMatch = entry.media_type.toLowerCase() === activeCategory;
       const statusMatch = entry.userStatus.toLowerCase() === activeStatus;
       return categoryMatch && statusMatch;
     })
-    .sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }));
+    .sort((a, b) => (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0) || a.title.localeCompare(b.title));
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-10 relative">
@@ -143,5 +143,13 @@ export default function App() {
 
       {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <SavedEntriesProvider>
+      <InnerApp />
+    </SavedEntriesProvider>
   );
 }

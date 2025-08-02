@@ -1,6 +1,6 @@
 import type { MediaItem } from '../../types';
 import MediaCard from './mediaCard';
-import use_saved_entries from '../../hooks/use_saved_entries';
+import { useSavedEntriesContext } from '../../hooks/savedEntriesContext';
 
 type MediaListProps = {
   results: MediaItem[];
@@ -8,7 +8,7 @@ type MediaListProps = {
 };
 
 export default function MediaList({ results, onCardClick }: MediaListProps) {
-  const { add_entry } = use_saved_entries();
+  const { addEntry } = useSavedEntriesContext();
 
   const handleSaveClick = (item: MediaItem) => {
     const saved = {
@@ -20,7 +20,7 @@ export default function MediaList({ results, onCardClick }: MediaListProps) {
       favorite: false,
       savedAt: new Date().toISOString(),
     };
-    add_entry(saved);
+    addEntry(saved);
     onCardClick(); // hides the dropdown
   };
 
