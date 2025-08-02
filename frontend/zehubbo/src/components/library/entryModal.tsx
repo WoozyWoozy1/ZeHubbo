@@ -8,14 +8,21 @@ type EntryModalProps = {
 };
 
 export default function EntryModal({ entry, onClose }: EntryModalProps) {
-  const { updateEntry } = useSavedEntriesContext();
+  const { updateEntry, removeEntry } = useSavedEntriesContext();
 
   const [userRating, setUserRating] = useState(entry.userRating ?? 0);
   const [userReview, setUserReview] = useState(entry.userReview ?? '');
   const [userNotes, setUserNotes] = useState(entry.userNotes ?? '');
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleSave = () => {
     updateEntry({ ...entry, userRating, userReview, userNotes });
+    onClose();
+  };
+
+  const handleDelete = () => {
+    removeEntry(entry.source, entry.id);
+    setShowConfirm(false);
     onClose();
   };
 
@@ -85,15 +92,45 @@ export default function EntryModal({ entry, onClose }: EntryModalProps) {
           />
         </div>
 
-        <div className="mt-4 flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
-            Cancel
+        <div className="mt-4 flex justify-between">
+          <button
+            onClick={() => setShowConfirm(true)}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Delete
           </button>
-          <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            Save
-          </button>
+          <div className="flex gap-2">
+            <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+              Cancel
+            </button>
+            <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+              Save
+            </button>
+          </div>
         </div>
       </div>
+
+      {showConfirm && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-60">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <p className="text-lg font-semibold mb-4">Are you sure you want to delete this entry?</p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
