@@ -12,9 +12,10 @@ export default function EntryModal({ entry, onClose }: EntryModalProps) {
 
   const [userRating, setUserRating] = useState(entry.userRating ?? 0);
   const [userReview, setUserReview] = useState(entry.userReview ?? '');
+  const [userNotes, setUserNotes] = useState(entry.userNotes ?? '');
 
   const handleSave = () => {
-    update_entry({ ...entry, userRating, userReview });
+    update_entry({ ...entry, userRating, userReview, userNotes });
     onClose();
   };
 
@@ -63,13 +64,24 @@ export default function EntryModal({ entry, onClose }: EntryModalProps) {
         </div>
 
         <div className="mt-4">
-          <label className="text-sm font-medium block mb-1">Your Review / Notes</label>
+          <label className="text-sm font-medium block mb-1">Your Review</label>
           <textarea
             className="w-full border border-gray-300 rounded p-2"
             rows={4}
             value={userReview}
             onChange={(e) => setUserReview(e.target.value)}
             placeholder="Write your thoughts..."
+          />
+        </div>
+
+        <div className="mt-4">
+          <label className="text-sm font-medium block mb-1">Your Notes</label>
+          <textarea
+            className="w-full border border-gray-300 rounded p-2"
+            rows={2}
+            value={userNotes}
+            onChange={(e) => setUserNotes(e.target.value)}
+            placeholder="Quick notes, tags, reminders..."
           />
         </div>
 

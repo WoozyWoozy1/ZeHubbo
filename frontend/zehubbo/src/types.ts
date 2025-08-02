@@ -42,6 +42,9 @@ export type SavedEntry = MediaItem & {
   /** User's written review about the media */
   userReview: string;
 
+  /** User's written notes about the media */
+  userNotes: string;
+
   /** Whether the media is marked as a favorite by the user */
   favorite: boolean;
 

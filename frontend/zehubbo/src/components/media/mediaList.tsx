@@ -16,6 +16,7 @@ export default function MediaList({ results, onCardClick }: MediaListProps) {
       userStatus: 'default',
       userRating: 0,
       userReview: '',
+      userNotes: '',
       favorite: false,
       savedAt: new Date().toISOString(),
     };
