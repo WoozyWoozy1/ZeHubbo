@@ -10,7 +10,9 @@ type EntryModalProps = {
 export default function EntryModal({ entry, onClose }: EntryModalProps) {
   const { updateEntry, removeEntry } = useSavedEntriesContext();
 
-  const [userRating, setUserRating] = useState(entry.userRating ?? 0);
+  const [userRating, setUserRating] = useState<number | null>(
+    entry.userRating === 0 ? null : entry.userRating ?? null
+  );
   const [userReview, setUserReview] = useState(entry.userReview ?? '');
   const [userNotes, setUserNotes] = useState(entry.userNotes ?? '');
   const [showConfirm, setShowConfirm] = useState(false);
@@ -61,9 +63,12 @@ export default function EntryModal({ entry, onClose }: EntryModalProps) {
           <label className="text-sm font-medium block mb-1">Your Rating</label>
           <select
             className="w-full border border-gray-300 rounded p-2"
-            value={userRating}
-            onChange={(e) => setUserRating(Number(e.target.value))}
+            value={userRating ?? ''}
+            onChange={(e) =>
+              setUserRating(e.target.value === '' ? null : Number(e.target.value))
+            }
           >
+            <option value="">Unrated</option>
             {Array.from({ length: 11 }, (_, i) => (
               <option key={i} value={i}>{i}</option>
             ))}
