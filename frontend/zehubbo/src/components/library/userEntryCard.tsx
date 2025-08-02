@@ -27,7 +27,6 @@ export default function UserEntryCard({ entry, onClick }: UserEntryCardProps) {
   const { update_entry, refresh_entries } = use_saved_entries();
 
   const handleStatusChange = (newStatus: string) => {
-    // Fetch the latest version of this entry to avoid overwriting edits
     const latest = JSON.parse(localStorage.getItem('zehubbo-saved') || '[]')
       .find((e: SavedEntry) => e.source === entry.source && e.id === entry.id);
 
@@ -39,6 +38,12 @@ export default function UserEntryCard({ entry, onClick }: UserEntryCardProps) {
 
     refresh_entries();
     setShowOptions(false);
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation(); // avoid triggering entry modal
+    update_entry({ ...entry, favorite: !entry.favorite });
+    refresh_entries();
   };
 
   const statusOptions = getStatusOptions(entry.media_type);
@@ -59,6 +64,13 @@ export default function UserEntryCard({ entry, onClick }: UserEntryCardProps) {
           No image
         </div>
       )}
+
+      {/* Favorite star */}
+      <div className="absolute top-2 right-2 z-20" onClick={handleToggleFavorite}>
+        <span className={`text-yellow-400 text-lg select-none`}>
+          {entry.favorite ? '★' : '☆'}
+        </span>
+      </div>
 
       {/* Title overlay */}
       <div className="absolute bottom-0 left-0 w-full px-3 py-2 bg-gradient-to-t from-black/80 to-transparent">
