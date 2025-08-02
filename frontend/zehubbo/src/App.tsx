@@ -9,6 +9,7 @@ import type { MediaItem, SavedEntry } from './types';
 import CategoryTabs from './components/library/categoryTabs';
 import StatusTabs from './components/library/statusTabs';
 import UserEntryCard from './components/library/userEntryCard';
+import EntryModal from './components/library/entryModal';
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -17,8 +18,9 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('movie'); // default to movie
+  const [activeCategory, setActiveCategory] = useState('movie');
   const [activeStatus, setActiveStatus] = useState('default');
+  const [selectedEntry, setSelectedEntry] = useState<SavedEntry | null>(null);
 
   const { saved_entries } = use_saved_entries();
   const searchAreaRef = useRef<HTMLDivElement>(null);
@@ -84,13 +86,12 @@ export default function App() {
   };
 
   const filteredEntries = saved_entries
-  .filter((entry: SavedEntry) => {
-    const categoryMatch = entry.media_type.toLowerCase() === activeCategory;
-    const statusMatch = entry.userStatus.toLowerCase() === activeStatus;
-    return categoryMatch && statusMatch;
-  })
-  .sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }));
-
+    .filter((entry: SavedEntry) => {
+      const categoryMatch = entry.media_type.toLowerCase() === activeCategory;
+      const statusMatch = entry.userStatus.toLowerCase() === activeStatus;
+      return categoryMatch && statusMatch;
+    })
+    .sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }));
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-10 relative">
@@ -127,10 +128,18 @@ export default function App() {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-6">
           {filteredEntries.map((entry, index) => (
-            <UserEntryCard key={index} entry={entry} />
+            <UserEntryCard
+              key={index}
+              entry={entry}
+              onClick={() => setSelectedEntry(entry)}
+            />
           ))}
         </div>
       </div>
+
+      {selectedEntry && (
+        <EntryModal entry={selectedEntry} onClose={() => setSelectedEntry(null)} />
+      )}
 
       {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>

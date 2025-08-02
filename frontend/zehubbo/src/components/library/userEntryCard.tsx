@@ -4,6 +4,7 @@ import use_saved_entries from '../../hooks/use_saved_entries';
 
 type UserEntryCardProps = {
   entry: SavedEntry;
+  onClick?: () => void;
 };
 
 const getStatusOptions = (mediaType: string): string[] => {
@@ -21,20 +22,32 @@ const getStatusOptions = (mediaType: string): string[] => {
   return map[mediaType.toLowerCase()] || ['Experiencing', 'Completed', 'On Hold', 'Dropped', 'Plan to Experience'];
 };
 
-export default function UserEntryCard({ entry }: UserEntryCardProps) {
+export default function UserEntryCard({ entry, onClick }: UserEntryCardProps) {
   const [showOptions, setShowOptions] = useState(false);
   const { update_entry, refresh_entries } = use_saved_entries();
 
   const handleStatusChange = (newStatus: string) => {
-    update_entry({ ...entry, userStatus: newStatus.toLowerCase() });
-    refresh_entries(); // forces UI update
+    // Fetch the latest version of this entry to avoid overwriting edits
+    const latest = JSON.parse(localStorage.getItem('zehubbo-saved') || '[]')
+      .find((e: SavedEntry) => e.source === entry.source && e.id === entry.id);
+
+    if (latest) {
+      update_entry({ ...latest, userStatus: newStatus.toLowerCase() });
+    } else {
+      update_entry({ ...entry, userStatus: newStatus.toLowerCase() });
+    }
+
+    refresh_entries();
     setShowOptions(false);
   };
 
   const statusOptions = getStatusOptions(entry.media_type);
 
   return (
-    <div className="relative w-full max-w-[220px] aspect-[2/3] overflow-hidden rounded-2xl shadow-lg bg-gray-300 mx-auto">
+    <div
+      className="relative w-full max-w-[220px] aspect-[2/3] overflow-hidden rounded-2xl shadow-lg bg-gray-300 mx-auto cursor-pointer"
+      onClick={onClick}
+    >
       {entry.image_url ? (
         <img
           src={entry.image_url}
@@ -47,13 +60,13 @@ export default function UserEntryCard({ entry }: UserEntryCardProps) {
         </div>
       )}
 
-      {/* Title overlay at bottom left */}
+      {/* Title overlay */}
       <div className="absolute bottom-0 left-0 w-full px-3 py-2 bg-gradient-to-t from-black/80 to-transparent">
         <p className="text-white text-sm font-semibold truncate">{entry.title}</p>
       </div>
 
-      {/* Floating button bottom right */}
-      <div className="absolute bottom-2 right-2">
+      {/* Status dropdown button */}
+      <div className="absolute bottom-2 right-2 z-20" onClick={(e) => e.stopPropagation()}>
         <button
           className="bg-white/80 backdrop-blur px-2 py-1 rounded-full text-xs shadow hover:bg-white"
           onClick={() => setShowOptions(!showOptions)}
@@ -62,7 +75,7 @@ export default function UserEntryCard({ entry }: UserEntryCardProps) {
         </button>
 
         {showOptions && (
-          <div className="absolute bottom-full right-0 mb-2 bg-white border border-gray-300 rounded-md shadow-md z-10">
+          <div className="absolute bottom-full right-0 mb-2 bg-white border border-gray-300 rounded-md shadow-md z-50">
             {statusOptions.map((status) => (
               <div
                 key={status}
