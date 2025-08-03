@@ -10,6 +10,7 @@ import CategoryTabs from './components/library/categoryTabs';
 import StatusTabs from './components/library/statusTabs';
 import UserEntryCard from './components/library/userEntryCard';
 import EntryModal from './components/library/entryModal';
+import EntrySearchBar from './components/library/entrySearchBar';
 
 function InnerApp() {
   const [query, setQuery] = useState('');
@@ -21,6 +22,7 @@ function InnerApp() {
   const [activeCategory, setActiveCategory] = useState('movie');
   const [activeStatus, setActiveStatus] = useState('default');
   const [selectedEntry, setSelectedEntry] = useState<SavedEntry | null>(null);
+  const [entrySearchQuery, setEntrySearchQuery] = useState('');
 
   const { savedEntries } = useSavedEntriesContext();
   const searchAreaRef = useRef<HTMLDivElement>(null);
@@ -89,7 +91,8 @@ function InnerApp() {
     .filter((entry: SavedEntry) => {
       const categoryMatch = entry.media_type.toLowerCase() === activeCategory;
       const statusMatch = entry.userStatus.toLowerCase() === activeStatus;
-      return categoryMatch && statusMatch;
+      const searchMatch = entry.title.toLowerCase().includes(entrySearchQuery.toLowerCase());
+      return categoryMatch && statusMatch && searchMatch;
     })
     .sort((a, b) => (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0) || a.title.localeCompare(b.title));
 
@@ -118,12 +121,22 @@ function InnerApp() {
             setActiveCategory(category);
             const firstStatus = getStatusOptions(category)[0].toLowerCase();
             setActiveStatus(firstStatus);
+            setEntrySearchQuery('');
           }}
         />
         <StatusTabs
           selected={activeStatus}
-          onSelect={setActiveStatus}
+          onSelect={(status) => {
+            setActiveStatus(status);
+            setEntrySearchQuery('');
+          }}
           options={getStatusOptions(activeCategory)}
+        />
+
+        <EntrySearchBar
+          value={entrySearchQuery}
+          onChange={setEntrySearchQuery}
+          placeholder={`Search ${activeCategory} - ${activeStatus}`}
         />
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-6">
