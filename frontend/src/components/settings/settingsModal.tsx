@@ -19,9 +19,15 @@ export default function SettingsModal({ isOpen, onClose, onDownload }: SettingsM
         <h2 className="text-xl font-bold mb-4">Settings</h2>
         <button
           onClick={onDownload}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 mb-2"
         >
           Download Save File
+        </button>
+        <button
+          onClick={() => alert("Import from AniList coming soon...")}
+          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
+        >
+          Import from AniList
         </button>
       </div>
     </div>
