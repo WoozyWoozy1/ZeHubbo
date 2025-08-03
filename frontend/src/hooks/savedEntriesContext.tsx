@@ -9,6 +9,7 @@ type SavedEntriesContextType = {
   addEntry: (entry: SavedEntry) => void;
   removeEntry: (source: string, id: string) => void;
   updateEntry: (updated: SavedEntry) => void;
+  replaceAniListEntries: (entries: SavedEntry[]) => void;
 };
 
 const SavedEntriesContext = createContext<SavedEntriesContextType | undefined>(undefined);
@@ -48,8 +49,14 @@ export const SavedEntriesProvider = ({ children }: { children: React.ReactNode }
     saveToStorage(updated);
   };
 
+  const replaceAniListEntries = (entries: SavedEntry[]) => {
+    const others = savedEntries.filter(e => e.source !== "AniList");
+    const updated = [...others, ...entries];
+    saveToStorage(updated);
+  };
+
   return (
-    <SavedEntriesContext.Provider value={{ savedEntries, addEntry, removeEntry, updateEntry }}>
+    <SavedEntriesContext.Provider value={{ savedEntries, addEntry, removeEntry, updateEntry, replaceAniListEntries }}>
       {children}
     </SavedEntriesContext.Provider>
   );

@@ -1,3 +1,5 @@
+import { useSavedEntriesContext } from "../../hooks/savedEntriesContext";
+
 type SettingsModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -5,13 +7,44 @@ type SettingsModalProps = {
 };
 
 export default function SettingsModal({ isOpen, onClose, onDownload }: SettingsModalProps) {
+  const { replaceAniListEntries } = useSavedEntriesContext();
+
   if (!isOpen) return null;
 
-  const handleAniListImport = () => {
-    const clientId = 29041;
-    const redirectUri = encodeURIComponent("http://localhost:5173/auth/callback");
-    const authUrl = `https://anilist.co/api/v2/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}`;
-    window.location.href = authUrl;
+  const handleAniListImport = async () => {
+    const token = localStorage.getItem("anilist_token");
+    if (!token) {
+      alert("No AniList token found.");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:8000/anilist/sync", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      const data = await res.json();
+
+      if (!Array.isArray(data)) {
+        console.error("Unexpected response:", data);
+        alert("Failed to sync AniList entries.");
+        return;
+      }
+
+      console.log("Fetched AniList entries:", data);
+      console.log("First entry:", data[0]);
+
+      replaceAniListEntries(data); // 💥 BULK REPLACE FIX
+
+      alert(`Synced ${data.length} AniList entries.`);
+    } catch (err) {
+      console.error("Error syncing from AniList:", err);
+      alert("Something went wrong while syncing.");
+    }
   };
 
   return (
