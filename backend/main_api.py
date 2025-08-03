@@ -65,7 +65,7 @@ def sync_anilist_entries(data: dict = Body(...)):
         "Content-Type": "application/json",
     }
 
-    # Step 1: get user ID
+    # Step 1: Get user ID
     viewer_query = """
     query {
       Viewer {
@@ -79,84 +79,88 @@ def sync_anilist_entries(data: dict = Body(...)):
         raise HTTPException(status_code=viewer_res.status_code, detail="Failed to fetch user ID")
 
     user_id = viewer_res.json()["data"]["Viewer"]["id"]
-
-    # Step 2: get media list
-    media_query = """
-    query ($userId: Int) {
-      MediaListCollection(userId: $userId, type: ANIME) {
-        lists {
-          name
-          entries {
-            media {
-              id
-              title {
-                english
-                romaji
-              }
-              coverImage {
-                large
-              }
-              averageScore
-              startDate {
-                year
-                month
-                day
-              }
-            }
-            status
-            score
-            notes
-          }
-        }
-      }
-    }
-    """
-
-    payload = {
-        "query": media_query,
-        "variables": {"userId": user_id}
-    }
-
-    media_res = requests.post("https://graphql.anilist.co", json=payload, headers=headers)
-    if media_res.status_code != 200:
-        print("AniList API Error:", media_res.status_code)
-        print("Response Text:", media_res.text)
-        raise HTTPException(status_code=media_res.status_code, detail="Failed to fetch user media list")
-
-    raw = media_res.json()
     entries = []
 
-    for lst in raw["data"]["MediaListCollection"]["lists"]:
-        for entry in lst["entries"]:
-            media = entry.get("media", {})
-            media_id = media.get("id")
-            if not media_id:
-                continue
+    # Step 2: Fetch ANIME + MANGA types
+    for media_type, zehubbo_default in [("ANIME", "anime"), ("MANGA", None)]:
+        query = """
+        query ($userId: Int, $type: MediaType) {
+          MediaListCollection(userId: $userId, type: $type) {
+            lists {
+              name
+              entries {
+                media {
+                  id
+                  title {
+                    english
+                    romaji
+                  }
+                  description(asHtml: false)
+                  coverImage {
+                    large
+                  }
+                  averageScore
+                  startDate {
+                    year
+                    month
+                    day
+                  }
+                  format
+                }
+                status
+                score
+                notes
+              }
+            }
+          }
+        }
+        """
+        variables = {"userId": user_id, "type": media_type}
+        res = requests.post("https://graphql.anilist.co", json={"query": query, "variables": variables}, headers=headers)
+        if res.status_code != 200:
+            print(f"{media_type} fetch failed:", res.text)
+            continue
 
-            titles = media.get("title", {})
-            title = titles.get("english") or titles.get("romaji") or "Untitled"
-            image_url = media.get("coverImage", {}).get("large", "")
-            rating = round(media["averageScore"] / 10, 2) if media.get("averageScore") else None
-            start = media.get("startDate", {})
-            year, month, day = start.get("year"), start.get("month"), start.get("day")
-            release_date = (
-                f"{day:02d}-{month:02d}-{year}" if day and month and year else
-                f"{month:02d}-{year}" if month and year else
-                f"{year}" if year else None
-            )
+        data = res.json()
+        for lst in data["data"]["MediaListCollection"]["lists"]:
+            for entry in lst["entries"]:
+                media = entry.get("media", {})
+                media_id = media.get("id")
+                if not media_id:
+                    continue
 
-            entries.append({
-                "title": title,
-                "description": entry.get("notes") or "",
-                "release_date": release_date,
-                "rating": {"AniList": rating} if rating else {},
-                "image_url": image_url,
-                "source": "AniList",
-                "id": str(media_id),
-                "media_type": "anime",
-                "userStatus": map_status(entry.get("status", "")),
-                "userRating": entry.get("score", 0),
-                "favorite": False
-            })
+                titles = media.get("title", {})
+                title = titles.get("english") or titles.get("romaji") or "Untitled"
+                image_url = media.get("coverImage", {}).get("large", "")
+                rating = round(media["averageScore"] / 10, 2) if media.get("averageScore") else None
+                start = media.get("startDate", {})
+                year, month, day = start.get("year"), start.get("month"), start.get("day")
+                release_date = (
+                    f"{day:02d}-{month:02d}-{year}" if day and month and year else
+                    f"{month:02d}-{year}" if month and year else
+                    f"{year}" if year else None
+                )
+
+                # Determine final media_type for ZeHubbo
+                final_type = zehubbo_default
+                if media_type == "MANGA":
+                    fmt = media.get("format")
+                    final_type = "light novel" if fmt == "NOVEL" else "manga"
+
+                description = media.get("description") or entry.get("notes") or ""
+
+                entries.append({
+                    "title": title,
+                    "description": description,
+                    "release_date": release_date,
+                    "rating": {"AniList": rating} if rating else {},
+                    "image_url": image_url,
+                    "source": "AniList",
+                    "id": str(media_id),
+                    "media_type": final_type,
+                    "userStatus": map_status(entry.get("status", ""), final_type),
+                    "userRating": entry.get("score", 0),
+                    "favorite": False
+                })
 
     return entries
