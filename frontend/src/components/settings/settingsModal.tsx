@@ -7,6 +7,13 @@ type SettingsModalProps = {
 export default function SettingsModal({ isOpen, onClose, onDownload }: SettingsModalProps) {
   if (!isOpen) return null;
 
+  const handleAniListImport = () => {
+    const clientId = 29041;
+    const redirectUri = encodeURIComponent("http://localhost:5173/auth/callback");
+    const authUrl = `https://anilist.co/api/v2/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}`;
+    window.location.href = authUrl;
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-80 relative">
@@ -24,7 +31,7 @@ export default function SettingsModal({ isOpen, onClose, onDownload }: SettingsM
           Download Save File
         </button>
         <button
-          onClick={() => alert("Import from AniList coming soon...")}
+          onClick={handleAniListImport}
           className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
         >
           Import from AniList
