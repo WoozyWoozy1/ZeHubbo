@@ -1,3 +1,5 @@
+import { useSavedEntriesContext } from "../../hooks/savedEntriesContext";
+
 type SettingsModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -5,7 +7,45 @@ type SettingsModalProps = {
 };
 
 export default function SettingsModal({ isOpen, onClose, onDownload }: SettingsModalProps) {
+  const { replaceAniListEntries } = useSavedEntriesContext();
+
   if (!isOpen) return null;
+
+  const handleAniListImport = async () => {
+    const token = localStorage.getItem("anilist_token");
+    if (!token) {
+      alert("No AniList token found.");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:8000/anilist/sync", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      const data = await res.json();
+
+      if (!Array.isArray(data)) {
+        console.error("Unexpected response:", data);
+        alert("Failed to sync AniList entries.");
+        return;
+      }
+
+      console.log("Fetched AniList entries:", data);
+      console.log("First entry:", data[0]);
+
+      replaceAniListEntries(data); // 💥 BULK REPLACE FIX
+
+      alert(`Synced ${data.length} AniList entries.`);
+    } catch (err) {
+      console.error("Error syncing from AniList:", err);
+      alert("Something went wrong while syncing.");
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -24,7 +64,7 @@ export default function SettingsModal({ isOpen, onClose, onDownload }: SettingsM
           Download Save File
         </button>
         <button
-          onClick={() => alert("Import from AniList coming soon...")}
+          onClick={handleAniListImport}
           className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
         >
           Import from AniList
