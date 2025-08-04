@@ -19,14 +19,16 @@ export default function CategoryTabs({ selected, onSelect }: CategoryTabsProps) 
     <div className="flex flex-wrap gap-2 justify-center mb-4">
       {categories.map((category) => {
         const key = category.toLowerCase();
+        const isActive = selected === key;
         return (
           <button
             key={key}
             onClick={() => onSelect(key)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition 
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-150
+              transform hover:scale-105 active:scale-95 focus:outline-none
               ${
-                selected === key
-                  ? 'bg-blue-600 text-white'
+                isActive
+                  ? 'bg-blue-600 text-white ring-2 ring-blue-400'
                   : 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-100'
               }`}
           >

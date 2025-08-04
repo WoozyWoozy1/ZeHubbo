@@ -9,14 +9,16 @@ export default function StatusTabs({ selected, onSelect, options }: StatusTabsPr
     <div className="flex flex-wrap gap-2 justify-center mb-6">
       {options.map((label) => {
         const key = label.toLowerCase();
+        const isActive = selected === key;
         return (
           <button
             key={key}
             onClick={() => onSelect(key)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition 
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-150
+              transform hover:scale-105 active:scale-95 focus:outline-none
               ${
-                selected === key
-                  ? 'bg-green-600 text-white'
+                isActive
+                  ? 'bg-green-600 text-white ring-2 ring-green-400'
                   : 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-100'
               }`}
           >
