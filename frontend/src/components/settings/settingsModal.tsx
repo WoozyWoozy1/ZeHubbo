@@ -8,7 +8,7 @@ type SettingsModalProps = {
 };
 
 export default function SettingsModal({ isOpen, onClose, onDownload }: SettingsModalProps) {
-  const { replaceAniListEntries } = useSavedEntriesContext();
+  const { replaceAniListEntries, replaceAllEntries } = useSavedEntriesContext();
 
   if (!isOpen) return null;
 
@@ -54,7 +54,7 @@ export default function SettingsModal({ isOpen, onClose, onDownload }: SettingsM
         const text = event.target?.result as string;
         const parsed = JSON.parse(text);
         if (Array.isArray(parsed)) {
-          replaceAniListEntries(parsed);
+          replaceAllEntries(parsed);
           toast.success(`Imported ${parsed.length} entries.`);
         } else {
           toast.error("Invalid file format.");

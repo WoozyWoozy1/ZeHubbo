@@ -82,6 +82,13 @@ export default function UserEntryCard({ entry, onClick }: UserEntryCardProps) {
         </span>
       </div>
 
+      {/* Rating badge */}
+      {typeof entry.userRating === 'number' && entry.userRating > 0 && (
+        <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-0.5 rounded-full z-20">
+          {entry.userRating}/10
+        </div>
+      )}
+
       {/* Title overlay */}
       <div className="absolute bottom-0 left-0 w-full px-3 py-2 bg-gradient-to-t from-black/80 to-transparent">
         <p className="text-white text-sm font-semibold truncate">{entry.title}</p>
