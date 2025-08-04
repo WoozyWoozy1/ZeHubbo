@@ -45,20 +45,20 @@ export default function EntryModal({ entry, onClose }: EntryModalProps) {
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="bg-white rounded-xl p-6 max-w-lg w-full shadow-xl relative"
+          className="bg-white dark:bg-gray-800 text-black dark:text-white rounded-xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-xl relative"
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
           <button
-            className="absolute top-3 right-3 text-gray-500 hover:text-black"
+            className="absolute top-3 right-3 text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white"
             onClick={onClose}
           >
             ✖
           </button>
 
-          <div className="flex gap-4">
+          <div className="flex gap-4 mb-4">
             {entry.image_url && (
               <img
                 src={entry.image_url}
@@ -66,19 +66,19 @@ export default function EntryModal({ entry, onClose }: EntryModalProps) {
                 className="w-32 h-48 object-cover rounded-lg"
               />
             )}
-            <div className="flex flex-col gap-1">
-              <h2 className="text-xl font-bold">{entry.title}</h2>
-              <p className="text-sm text-gray-600">{entry.description || 'No description.'}</p>
-              <p className="text-sm mt-1">Release: {entry.release_date || 'Unknown'}</p>
-              <p className="text-sm">Source: {entry.source}</p>
-              <p className="text-sm">Ratings: {ratingDisplay || 'N/A'}</p>
+            <div className="flex flex-col gap-1 text-sm">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">{entry.title}</h2>
+              <p className="text-gray-700 dark:text-gray-300">{entry.description || 'No description.'}</p>
+              <p className="mt-1 text-gray-600 dark:text-gray-400">Release: {entry.release_date || 'Unknown'}</p>
+              <p className="text-gray-600 dark:text-gray-400">Source: {entry.source}</p>
+              <p className="text-gray-600 dark:text-gray-400">Ratings: {ratingDisplay || 'N/A'}</p>
             </div>
           </div>
 
           <div className="mt-4">
-            <label className="text-sm font-medium block mb-1">Your Rating</label>
+            <label className="text-sm font-medium block mb-1 text-gray-700 dark:text-white">Your Rating</label>
             <select
-              className="w-full border border-gray-300 rounded p-2"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 bg-white dark:bg-gray-800 text-black dark:text-white"
               value={userRating ?? ''}
               onChange={(e) =>
                 setUserRating(e.target.value === '' ? null : Number(e.target.value))
@@ -86,17 +86,15 @@ export default function EntryModal({ entry, onClose }: EntryModalProps) {
             >
               <option value="">Unrated</option>
               {Array.from({ length: 11 }, (_, i) => (
-                <option key={i} value={i}>
-                  {i}
-                </option>
+                <option key={i} value={i}>{i}</option>
               ))}
             </select>
           </div>
 
           <div className="mt-4">
-            <label className="text-sm font-medium block mb-1">Your Review</label>
+            <label className="text-sm font-medium block mb-1 text-gray-700 dark:text-white">Your Review</label>
             <textarea
-              className="w-full border border-gray-300 rounded p-2"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 bg-white dark:bg-gray-800 text-black dark:text-white"
               rows={4}
               value={userReview}
               onChange={(e) => setUserReview(e.target.value)}
@@ -105,9 +103,9 @@ export default function EntryModal({ entry, onClose }: EntryModalProps) {
           </div>
 
           <div className="mt-4">
-            <label className="text-sm font-medium block mb-1">Your Notes</label>
+            <label className="text-sm font-medium block mb-1 text-gray-700 dark:text-white">Your Notes</label>
             <textarea
-              className="w-full border border-gray-300 rounded p-2"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 bg-white dark:bg-gray-800 text-black dark:text-white"
               rows={2}
               value={userNotes}
               onChange={(e) => setUserNotes(e.target.value)}
@@ -123,16 +121,10 @@ export default function EntryModal({ entry, onClose }: EntryModalProps) {
               Delete
             </button>
             <div className="flex gap-2">
-              <button
-                onClick={onClose}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-              >
+              <button onClick={onClose} className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600">
                 Cancel
               </button>
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
+              <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                 Save
               </button>
             </div>
@@ -147,19 +139,17 @@ export default function EntryModal({ entry, onClose }: EntryModalProps) {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center"
+              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-sm w-full text-center text-black dark:text-white"
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
             >
-              <p className="text-lg font-semibold mb-4">
-                Are you sure you want to delete this entry?
-              </p>
+              <p className="text-lg font-semibold mb-4">Are you sure you want to delete this entry?</p>
               <div className="flex justify-center gap-4">
                 <button
                   onClick={() => setShowConfirm(false)}
-                  className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                  className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600"
                 >
                   Cancel
                 </button>
