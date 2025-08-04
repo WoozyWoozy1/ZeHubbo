@@ -4,6 +4,7 @@ import SearchBar from './components/search/searchBar';
 import MediaList from './components/media/mediaList';
 import SettingsModal from './components/settings/settingsModal';
 import SettingsButton from './components/settings/settingsButton';
+import DarkModeToggle from './components/settings/darkModeToggle';
 import { useSavedEntriesContext, SavedEntriesProvider } from './hooks/savedEntriesContext';
 import { search_media } from './api/search_media';
 import type { MediaItem, SavedEntry } from './types';
@@ -98,9 +99,8 @@ function InnerApp() {
     .sort((a, b) => (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0) || a.title.localeCompare(b.title));
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start p-10 relative">
-      <h1 className="text-3xl font-bold mb-6">ZeHubbo</h1>
-
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 dark:text-white flex flex-col items-center justify-start p-10 relative transition-colors">
+      <DarkModeToggle />
       <SettingsButton onClick={() => setShowSettings(true)} />
       <SettingsModal
         isOpen={showSettings}

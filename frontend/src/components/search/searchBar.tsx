@@ -24,7 +24,7 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
       <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        className="px-3 py-2 border border-gray-300 rounded-lg shadow-sm bg-white"
+        className="px-3 py-2 border border-gray-300 rounded-lg shadow-sm bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600"
       >
         <option value="movie">Movie</option>
         <option value="show">Show</option>
