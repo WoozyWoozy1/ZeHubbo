@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { SavedEntry } from '../../types';
 import { useSavedEntriesContext } from '../../hooks/savedEntriesContext';
 
@@ -25,6 +25,7 @@ const getStatusOptions = (mediaType: string): string[] => {
 export default function UserEntryCard({ entry, onClick }: UserEntryCardProps) {
   const [showOptions, setShowOptions] = useState(false);
   const { updateEntry } = useSavedEntriesContext();
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const handleStatusChange = (newStatus: string) => {
     updateEntry({ ...entry, userStatus: newStatus.toLowerCase() });
@@ -32,14 +33,30 @@ export default function UserEntryCard({ entry, onClick }: UserEntryCardProps) {
   };
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
-    e.stopPropagation(); // avoid triggering entry modal
+    e.stopPropagation();
     updateEntry({ ...entry, favorite: !entry.favorite });
   };
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        showOptions &&
+        cardRef.current &&
+        !cardRef.current.contains(e.target as Node)
+      ) {
+        setShowOptions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showOptions]);
 
   const statusOptions = getStatusOptions(entry.media_type);
 
   return (
     <div
+      ref={cardRef}
       className="relative w-full max-w-[220px] aspect-[2/3] overflow-hidden rounded-2xl shadow-lg bg-gray-300 mx-auto cursor-pointer transform transition-transform duration-200 hover:scale-105 active:scale-100"
       onClick={onClick}
     >
