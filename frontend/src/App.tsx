@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 import SearchBar from './components/search/searchBar';
 import MediaList from './components/media/mediaList';
 import SettingsModal from './components/settings/settingsModal';
@@ -163,6 +164,7 @@ export default function App() {
   return (
     <SavedEntriesProvider>
       <InnerApp />
+      <Toaster position="top-right" />
     </SavedEntriesProvider>
   );
 }

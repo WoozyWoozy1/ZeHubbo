@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useSavedEntriesContext } from "../../hooks/savedEntriesContext";
 
 type SettingsModalProps = {
@@ -14,7 +15,7 @@ export default function SettingsModal({ isOpen, onClose, onDownload }: SettingsM
   const handleAniListImport = async () => {
     const token = localStorage.getItem("anilist_token");
     if (!token) {
-      alert("No AniList token found.");
+      toast.error("No AniList token found.");
       return;
     }
 
@@ -31,19 +32,15 @@ export default function SettingsModal({ isOpen, onClose, onDownload }: SettingsM
 
       if (!Array.isArray(data)) {
         console.error("Unexpected response:", data);
-        alert("Failed to sync AniList entries.");
+        toast.error("Failed to sync AniList entries.");
         return;
       }
 
-      console.log("Fetched AniList entries:", data);
-      console.log("First entry:", data[0]);
-
-      replaceAniListEntries(data); // 💥 BULK REPLACE FIX
-
-      alert(`Synced ${data.length} AniList entries.`);
+      replaceAniListEntries(data);
+      toast.success(`Synced ${data.length} AniList entries.`);
     } catch (err) {
       console.error("Error syncing from AniList:", err);
-      alert("Something went wrong while syncing.");
+      toast.error("Something went wrong while syncing.");
     }
   };
 
