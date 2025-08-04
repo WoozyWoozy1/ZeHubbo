@@ -27,7 +27,7 @@ export default function MediaList({ results, onCardClick }: MediaListProps) {
   if (results.length === 0) return null;
 
   return (
-    <div className="absolute z-40 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-80 overflow-y-auto">
+    <div className="absolute z-40 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-80 overflow-y-auto animate-fade-in">
       {results.map((item, index) => (
         <MediaCard key={index} item={item} onClick={() => handleSaveClick(item)} />
       ))}

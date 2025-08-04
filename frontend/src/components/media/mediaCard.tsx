@@ -9,7 +9,7 @@ export default function MediaCard({ item, onClick }: MediaCardProps) {
   return (
     <div
       onClick={onClick}
-      className="flex items-center gap-4 px-4 py-2 hover:bg-gray-100 cursor-pointer"
+      className="flex items-center gap-4 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-150 rounded-md"
     >
       {item.image_url && (
         <img
@@ -19,7 +19,7 @@ export default function MediaCard({ item, onClick }: MediaCardProps) {
         />
       )}
       <div className="flex flex-col justify-center">
-        <h2 className="font-medium text-sm">{item.title}</h2>
+        <h2 className="font-medium text-sm text-gray-800 dark:text-white">{item.title}</h2>
       </div>
     </div>
   );
