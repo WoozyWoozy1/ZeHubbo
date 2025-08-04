@@ -26,7 +26,7 @@ export default function DarkModeToggle() {
   return (
     <button
       onClick={toggle}
-      className="absolute top-4 left-4 text-2xl hover:scale-110 transition-transform text-gray-800 dark:text-white"
+      className="absolute top-4 left-4 text-2xl hover:scale-110 transition-transform min-w-[40px] min-h-[40px] rounded-full text-gray-800 dark:text-white"
       title="Toggle Dark Mode"
     >
       {enabled ? '🌙' : '☀️'}
