@@ -44,6 +44,28 @@ export default function SettingsModal({ isOpen, onClose, onDownload }: SettingsM
     }
   };
 
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const text = event.target?.result as string;
+        const parsed = JSON.parse(text);
+        if (Array.isArray(parsed)) {
+          replaceAniListEntries(parsed);
+          toast.success(`Imported ${parsed.length} entries.`);
+        } else {
+          toast.error("Invalid file format.");
+        }
+      } catch {
+        toast.error("Failed to parse file.");
+      }
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-80 relative">
@@ -61,6 +83,14 @@ export default function SettingsModal({ isOpen, onClose, onDownload }: SettingsM
         >
           Download Save File
         </button>
+
+        <input
+          type="file"
+          accept=".json"
+          onChange={handleImportFile}
+          className="w-full bg-gray-100 dark:bg-gray-700 text-sm text-gray-700 dark:text-white file:mr-3 file:py-2 file:px-4 file:rounded file:border file:border-gray-300 file:text-sm file:bg-white dark:file:bg-gray-800 file:cursor-pointer mb-2"
+        />
+
         <button
           onClick={handleAniListImport}
           className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
