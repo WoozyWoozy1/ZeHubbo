@@ -40,7 +40,7 @@ export default function UserEntryCard({ entry, onClick }: UserEntryCardProps) {
 
   return (
     <div
-      className="relative w-full max-w-[220px] aspect-[2/3] overflow-hidden rounded-2xl shadow-lg bg-gray-300 mx-auto cursor-pointer"
+      className="relative w-full max-w-[220px] aspect-[2/3] overflow-hidden rounded-2xl shadow-lg bg-gray-300 mx-auto cursor-pointer transform transition-transform duration-200 hover:scale-105 active:scale-100"
       onClick={onClick}
     >
       {entry.image_url ? (
@@ -57,7 +57,10 @@ export default function UserEntryCard({ entry, onClick }: UserEntryCardProps) {
 
       {/* Favorite star */}
       <div className="absolute top-2 right-2 z-20" onClick={handleToggleFavorite}>
-        <span className={`text-yellow-400 text-lg select-none`}>
+        <span
+          className={`text-yellow-400 text-lg select-none transition-transform duration-150 hover:scale-125`}
+          title={entry.favorite ? 'Unfavorite' : 'Mark as Favorite'}
+        >
           {entry.favorite ? '★' : '☆'}
         </span>
       </div>
@@ -70,8 +73,9 @@ export default function UserEntryCard({ entry, onClick }: UserEntryCardProps) {
       {/* Status dropdown button */}
       <div className="absolute bottom-2 right-2 z-20" onClick={(e) => e.stopPropagation()}>
         <button
-          className="bg-white/80 backdrop-blur px-2 py-1 rounded-full text-xs shadow hover:bg-white"
+          className="bg-white/80 backdrop-blur px-2 py-1 rounded-full text-xs shadow hover:bg-white transition"
           onClick={() => setShowOptions(!showOptions)}
+          title="Change status"
         >
           ✏️
         </button>
