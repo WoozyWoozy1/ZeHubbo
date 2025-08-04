@@ -42,8 +42,9 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
-        className="flex-grow px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="flex-grow px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-black dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
+
 
       <button
         onClick={handleSubmit}
